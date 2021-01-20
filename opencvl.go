@@ -11,7 +11,7 @@ type Pipeline struct {
 // Layer is a layer of an OpenCVL pipeline
 type Layer interface {
 	Type() string
-	execute(img image.Image) (image.Image, error)
-	setArgs([]interface{})
+	execute(img *image.RGBA) (*image.RGBA, error)
+	setArgs([]interface{}) error
 	build() error
 }

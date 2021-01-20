@@ -15,21 +15,22 @@ func (l *openCVLayer) Type() string {
 	return "opencv"
 }
 
-func (l *openCVLayer) execute(img image.Image) (image.Image, error) {
+func (l *openCVLayer) execute(img *image.RGBA) (*image.RGBA, error) {
 	mat, err := gocv.ImageToMatRGBA(img)
 	if err != nil {
 		return nil, err
 	}
 	mat = l.process(mat, l.args...)
-	img, err = mat.ToImage()
+	out, err := mat.ToImage()
 	if err != nil {
 		return nil, err
 	}
-	return img, nil
+	return out.(*image.RGBA), nil
 }
 
-func (l *openCVLayer) setArgs(args []interface{}) {
+func (l *openCVLayer) setArgs(args []interface{}) error {
 	l.args = args
+	return nil
 }
 
 func (l *openCVLayer) build() error { return nil }

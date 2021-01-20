@@ -16,7 +16,7 @@ func (l *openCVLayer) Type() string {
 }
 
 func (l *openCVLayer) execute(img *image.RGBA) (*image.RGBA, error) {
-	mat, err := gocv.ImageToMatRGBA(img)
+	mat, err := gocv.ImageToMatRGB(img)
 	if err != nil {
 		return nil, err
 	}

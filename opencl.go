@@ -80,16 +80,25 @@ func (l *openCLLayer) build() error {
 
 func (l *openCLLayer) setArgs(progArgs []interface{}) error {
 	args := make([]interface{}, 0)
-	for _, progArg := range args {
-		switch progArg.(type) {
-		default:
-			return errors.New("Argument must be int32, float32, or uint32")
+	for _, progArg := range progArgs {
+		switch v := progArg.(type) {
 		case int32:
-			args = append(args, progArg)
+			args = append(args, v)
+			break
 		case uint32:
-			args = append(args, progArg)
+			args = append(args, v)
+			break
 		case float32:
-			args = append(args, progArg)
+			args = append(args, v)
+			break
+		case int:
+			args = append(args, int32(v))
+			break
+		case int64:
+			args = append(args, int32(v))
+			break
+		default:
+			return errors.New("Invalid Argument Type")
 		}
 	}
 	l.args = args
@@ -122,7 +131,10 @@ func (l *openCLLayer) execute(img *image.RGBA) (*image.RGBA, error) {
 	}
 
 	args := append([]interface{}{clImg, out}, l.args...)
-	l.kernel.SetArgs(args)
+	err = l.kernel.SetArgs(args...)
+	if err != nil {
+		return nil, err
+	}
 
 	local, err := l.kernel.PreferredWorkGroupSizeMultiple(l.d)
 	if err != nil {
@@ -149,7 +161,7 @@ func (l *openCLLayer) execute(img *image.RGBA) (*image.RGBA, error) {
 
 	final := image.NewRGBA(rect)
 	final.Stride = stride
-	_, err = l.queue.EnqueueReadImage(args[len(args)-1].(*cl.MemObject), true, [3]int{0, 0, 0}, [3]int{final.Bounds().Dx(), final.Bounds().Dy(), 1}, stride, 0, final.Pix, nil)
+	_, err = l.queue.EnqueueReadImage(out, true, [3]int{0, 0, 0}, [3]int{final.Bounds().Dx(), final.Bounds().Dy(), 1}, stride, 0, final.Pix, nil)
 	if err != nil {
 		return nil, err
 	}

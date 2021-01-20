@@ -45,3 +45,32 @@ func TestOpenCVLayer(t *testing.T) {
 		panic(err)
 	}
 }
+
+func BenchmarkOpenCVLayer(b *testing.B) {
+	pipeline := NewPipeline()
+	layer := NewOpenCVLayer(func(mat gocv.Mat, args ...interface{}) gocv.Mat {
+		gocv.BitwiseNot(mat, &mat)
+		return mat
+	})
+	err := pipeline.AddLayer(layer)
+	if err != nil {
+		panic(err)
+	}
+
+	file, err := os.Open("gopher.png")
+	if err != nil {
+		panic(err)
+	}
+	img, err := png.Decode(file)
+	if err != nil {
+		panic(err)
+	}
+	file.Close()
+
+	for i := 0; i < b.N; i++ {
+		img, err = pipeline.ExecuteOnImage(img.(*image.RGBA))
+		if err != nil {
+			panic(err)
+		}
+	}
+}

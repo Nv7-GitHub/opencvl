@@ -13,4 +13,5 @@ type Layer interface {
 	Type() string
 	execute(img image.Image) (image.Image, error)
 	setArgs([]interface{})
+	build() error
 }

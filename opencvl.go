@@ -123,3 +123,15 @@ func (p *Pipeline) ExecuteOnVideo(file string, outFile string) error {
 	}
 	return nil
 }
+
+// AddPipeline allows you to add a pipeline inside of another pipeline
+func (p *Pipeline) AddPipeline(pipeline Pipeline) error {
+	var err error
+	for _, layer := range pipeline.layers {
+		err = p.AddLayer(layer)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}

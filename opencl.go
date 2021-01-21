@@ -105,7 +105,7 @@ func (l *openCLLayer) setArgs(progArgs []interface{}) error {
 	return nil
 }
 
-func (l *openCLLayer) execute(img *image.RGBA) (*image.RGBA, error) {
+func (l *openCLLayer) execute(img *image.RGBA, time int) (*image.RGBA, error) {
 	rect := img.Rect
 	stride := img.Stride
 	bounds := img.Bounds()
@@ -130,7 +130,7 @@ func (l *openCLLayer) execute(img *image.RGBA) (*image.RGBA, error) {
 		return nil, err
 	}
 
-	args := append([]interface{}{clImg, out}, l.args...)
+	args := append([]interface{}{clImg, out, int32(time)}, l.args...)
 	err = l.kernel.SetArgs(args...)
 	if err != nil {
 		return nil, err

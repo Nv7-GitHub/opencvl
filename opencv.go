@@ -15,12 +15,12 @@ func (l *openCVLayer) Type() string {
 	return "opencv"
 }
 
-func (l *openCVLayer) execute(img *image.RGBA) (*image.RGBA, error) {
+func (l *openCVLayer) execute(img *image.RGBA, time int) (*image.RGBA, error) {
 	mat, err := gocv.ImageToMatRGB(img)
 	if err != nil {
 		return nil, err
 	}
-	mat = l.process(mat, l.args...)
+	mat = l.process(mat, append([]interface{}{time}, l.args...)...)
 	out, err := mat.ToImage()
 	if err != nil {
 		return nil, err

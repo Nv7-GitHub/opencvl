@@ -22,12 +22,12 @@ func TestOpenCLLayer(t *testing.T) {
 	__kernel void invert(
 		__read_only image2d_t in,
 		__write_only image2d_t out,
-		const int width,
-		const int height)
+		const int time)
 	{
 		const int2 pos = (int2)(get_global_id(0), get_global_id(1));
+		const int2 dim = get_image_dim(in);
 		float4 pixel = (float4)(0);
-		if ((pos.x < width) && (pos.y < height)) {
+		if (pos.x < dim.x && pos.y < dim.y) {
 			pixel = read_imagef(in, pos);
 			pixel = (float4)(1) - pixel;
 			pixel.w = 1;
@@ -46,11 +46,6 @@ func TestOpenCLLayer(t *testing.T) {
 	}
 
 	err = pipeline.Build()
-	if err != nil {
-		panic(err)
-	}
-
-	err = pipeline.SetOpenCLArgs(img.Bounds().Dx(), img.Bounds().Dy())
 	if err != nil {
 		panic(err)
 	}
@@ -75,7 +70,8 @@ func TestOpenCLLayer_Video(t *testing.T) {
 	var kernelSource = `
 	__kernel void invert(
 		__read_only image2d_t in,
-		__write_only image2d_t out)
+		__write_only image2d_t out,
+		const int time)
 	{
 		const int2 pos = (int2)(get_global_id(0), get_global_id(1));
 		const int2 dim = get_image_dim(in);
@@ -124,12 +120,12 @@ func BenchmarkOpenCLLayer(b *testing.B) {
 	__kernel void invert(
 		__read_only image2d_t in,
 		__write_only image2d_t out,
-		const int width,
-		const int height)
+		const int time)
 	{
 		const int2 pos = (int2)(get_global_id(0), get_global_id(1));
+		const int2 dim = get_image_dim(in);
 		float4 pixel = (float4)(0);
-		if ((pos.x < width) && (pos.y < height)) {
+		if (pos.x < dim.x && pos.y < dim.y) {
 			pixel = read_imagef(in, pos);
 			pixel = (float4)(1) - pixel;
 			pixel.w = 1;
@@ -148,11 +144,6 @@ func BenchmarkOpenCLLayer(b *testing.B) {
 	}
 
 	err = pipeline.Build()
-	if err != nil {
-		panic(err)
-	}
-
-	err = pipeline.SetOpenCLArgs(img.Bounds().Dx(), img.Bounds().Dy())
 	if err != nil {
 		panic(err)
 	}

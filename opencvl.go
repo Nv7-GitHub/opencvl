@@ -15,7 +15,7 @@ type Pipeline struct {
 // Layer is a layer of an OpenCVL pipeline
 type Layer interface {
 	Type() string
-	execute(img *image.RGBA) (*image.RGBA, error)
+	execute(img *image.RGBA, time int) (*image.RGBA, error)
 	setArgs([]interface{}) error
 	build() error
 }
@@ -76,7 +76,7 @@ func (p *Pipeline) Build() error {
 func (p *Pipeline) ExecuteOnImage(img *image.RGBA) (*image.RGBA, error) {
 	var err error
 	for _, layer := range p.layers {
-		img, err = layer.execute(img)
+		img, err = layer.execute(img, 0)
 		if err != nil {
 			return nil, err
 		}
@@ -99,6 +99,7 @@ func (p *Pipeline) ExecuteOnVideo(file string, outFile string) error {
 		return err
 	}
 	defer writer.Close()
+	time := 0
 	for video.Read(&img) {
 		if img.Empty() {
 			continue
@@ -107,10 +108,15 @@ func (p *Pipeline) ExecuteOnVideo(file string, outFile string) error {
 		if err != nil {
 			return err
 		}
-		im, err = p.ExecuteOnImage(im.(*image.RGBA))
-		if err != nil {
-			return err
+
+		var err error
+		for _, layer := range p.layers {
+			im, err = layer.execute(im.(*image.RGBA), time)
+			if err != nil {
+				return err
+			}
 		}
+
 		img, err = gocv.ImageToMatRGB(im)
 		if err != nil {
 			return err
@@ -120,6 +126,8 @@ func (p *Pipeline) ExecuteOnVideo(file string, outFile string) error {
 		if err != nil {
 			return err
 		}
+
+		time++
 	}
 	return nil
 }

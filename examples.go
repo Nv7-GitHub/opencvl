@@ -1,6 +1,6 @@
 package opencvl
 
-// Builtins contains some simple pipelines
+// Examples contains some example pipelines that are also usable for image transforms
 
 import (
 	"fmt"

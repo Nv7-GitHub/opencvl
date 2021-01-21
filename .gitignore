@@ -10,6 +10,8 @@
 
 # Product of tests
 out.png
+out.mp4
+outcl.mp4
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out

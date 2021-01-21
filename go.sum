@@ -1,0 +1,4 @@
+github.com/Nv7-Github/go-cl v0.0.0-20201109011528-f62014fcd70a h1:WJDzJqv/XoTNWHt9oflSD1OMS0y7vJVek382qrxFLk4=
+github.com/Nv7-Github/go-cl v0.0.0-20201109011528-f62014fcd70a/go.mod h1:RRVtxaQlBBnbo+n2fgYHhxQmXDkRLKWcWX93lJL0Yhw=
+gocv.io/x/gocv v0.26.0 h1:1azNvYEM245YN1bdw/WdX5YJzLg3Sr4STX0MqdWBIXM=
+gocv.io/x/gocv v0.26.0/go.mod h1:7Ju5KbPo+R85evmlhhKPVMwXtgDRNX/PtfVfbToSrLU=

@@ -3,6 +3,8 @@ package opencvl
 import (
 	"errors"
 	"image"
+
+	"gocv.io/x/gocv"
 )
 
 // Pipeline contains all necessary data for a opencvl pipeline
@@ -80,4 +82,44 @@ func (p *Pipeline) ExecuteOnImage(img *image.RGBA) (*image.RGBA, error) {
 		}
 	}
 	return img, nil
+}
+
+// ExecuteOnVideo executes the pipeline on every frame of a video and encodes it into a new video
+func (p *Pipeline) ExecuteOnVideo(file string, outFile string) error {
+	video, err := gocv.VideoCaptureFile(file)
+	if err != nil {
+		return err
+	}
+	defer video.Close()
+	img := gocv.NewMat()
+	var im image.Image
+	video.Read(&img)
+	writer, err := gocv.VideoWriterFile(outFile, video.CodecString(), video.Get(gocv.VideoCaptureFPS), img.Cols(), img.Rows(), true)
+	if err != nil {
+		return err
+	}
+	defer writer.Close()
+	for video.Read(&img) {
+		if img.Empty() {
+			continue
+		}
+		im, err = img.ToImage()
+		if err != nil {
+			return err
+		}
+		im, err = p.ExecuteOnImage(im.(*image.RGBA))
+		if err != nil {
+			return err
+		}
+		img, err = gocv.ImageToMatRGB(im)
+		if err != nil {
+			return err
+		}
+
+		err = writer.Write(img)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

@@ -4,7 +4,7 @@ __kernel void mandelbrot(
 		const int time,
 		const int animLength)
 {
-	const int2 pos = (int2)(get_global_id(0), get_global_id(1));
+	const int2 pos = (int2)(get_global_id(0), get_global_id(1)) + (int2)(get_local_id(0), get_local_id(1));
 	const int2 dim = get_image_dim(in);
 	const float2 pf = convert_float2(pos)/convert_float2(dim);
 	if (animLength == 1) {
@@ -50,7 +50,7 @@ __kernel void burning_ship(
 		const int time,
 		const int animLength)
 {
-	const int2 pos = (int2)(get_global_id(0), get_global_id(1));
+	const int2 pos = (int2)(get_global_id(0), get_global_id(1)) + (int2)(get_local_id(0), get_local_id(1));
 	const int2 dim = get_image_dim(in);
 	const float2 pf = convert_float2(pos)/convert_float2(dim);
 	if (animLength == 1) {

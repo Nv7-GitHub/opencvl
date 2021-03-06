@@ -12,7 +12,8 @@
 out.png
 out.mp4
 outcl.mp4
-zoom.mp4
+mandelzoom.mp4
+burningshipzoom.mp4
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out

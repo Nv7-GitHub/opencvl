@@ -3,6 +3,7 @@ package opencvl
 import (
 	"errors"
 	"image"
+	"math"
 
 	"github.com/Nv7-Github/go-cl"
 )
@@ -140,6 +141,7 @@ func (l *openCLLayer) execute(img *image.RGBA, time int) (*image.RGBA, error) {
 	if err != nil {
 		return nil, err
 	}
+	local = int(math.Floor(math.Sqrt(float64(local))))
 
 	xSize := bounds.Dx()
 	diff := xSize % local

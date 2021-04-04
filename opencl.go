@@ -15,7 +15,6 @@ type openCLLayer struct {
 	args       []interface{}
 
 	kernel *cl.Kernel
-	kargs  []interface{}
 	queue  *cl.CommandQueue
 	d      *cl.Device
 }
@@ -85,21 +84,16 @@ func (l *openCLLayer) setArgs(progArgs []interface{}) error {
 		switch v := progArg.(type) {
 		case int32:
 			args = append(args, v)
-			break
 		case uint32:
 			args = append(args, v)
-			break
 		case float32:
 			args = append(args, v)
-			break
 		case int:
 			args = append(args, int32(v))
-			break
 		case int64:
 			args = append(args, int32(v))
-			break
 		default:
-			return errors.New("Invalid Argument Type")
+			return errors.New("opencvl: invalid Argument Type")
 		}
 	}
 	l.args = args

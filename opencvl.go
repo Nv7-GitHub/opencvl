@@ -31,7 +31,7 @@ func NewPipeline() Pipeline {
 func (p *Pipeline) AddLayer(layer Layer) error {
 	kind := layer.Type()
 	if kind != "opencv" && kind != "opencl" {
-		return errors.New("Invalid pipeline kind")
+		return errors.New("opencvl: invalid pipeline kind")
 	}
 	p.layers = append(p.layers, layer)
 	return nil
@@ -73,10 +73,14 @@ func (p *Pipeline) Build() error {
 }
 
 // ExecuteOnImage executes the pipeline on an image
-func (p *Pipeline) ExecuteOnImage(img *image.RGBA) (*image.RGBA, error) {
+func (p *Pipeline) ExecuteOnImage(img *image.RGBA, timeDat ...int) (*image.RGBA, error) {
+	time := 0
+	if len(timeDat) > 0 {
+		time = timeDat[0]
+	}
 	var err error
 	for _, layer := range p.layers {
-		img, err = layer.execute(img, 0)
+		img, err = layer.execute(img, time)
 		if err != nil {
 			return nil, err
 		}
@@ -109,12 +113,9 @@ func (p *Pipeline) ExecuteOnVideo(file string, outFile string) error {
 			return err
 		}
 
-		var err error
-		for _, layer := range p.layers {
-			im, err = layer.execute(im.(*image.RGBA), time)
-			if err != nil {
-				return err
-			}
+		im, err = p.ExecuteOnImage(im.(*image.RGBA))
+		if err != nil {
+			return err
 		}
 
 		img, err = gocv.ImageToMatRGB(im)

@@ -93,7 +93,7 @@ func (l *openCLLayer) setArgs(progArgs []interface{}) error {
 			args = append(args, int32(v))
 		case int64:
 			args = append(args, int32(v))
-		case *image.Image:
+		case image.Image:
 			img, ok := progArg.(*image.RGBA)
 			if !ok {
 				im := progArg.(image.Image)

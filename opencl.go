@@ -3,6 +3,7 @@ package opencvl
 import (
 	"errors"
 	"image"
+	"image/draw"
 	"math"
 
 	"github.com/Nv7-Github/go-cl"
@@ -92,6 +93,31 @@ func (l *openCLLayer) setArgs(progArgs []interface{}) error {
 			args = append(args, int32(v))
 		case int64:
 			args = append(args, int32(v))
+		case *image.Image:
+			img, ok := progArg.(*image.RGBA)
+			if !ok {
+				im := progArg.(image.Image)
+				img = image.NewRGBA(im.Bounds())
+				draw.Draw(img, im.Bounds(), im, image.Point{}, draw.Src)
+			}
+			stride := img.Stride
+			bounds := img.Bounds()
+
+			format := cl.ImageFormat{
+				ChannelOrder:    cl.ChannelOrderRGBA,
+				ChannelDataType: cl.ChannelDataTypeUNormInt8,
+			}
+			desc := cl.ImageDescription{
+				Type:     cl.MemObjectTypeImage2D,
+				Width:    bounds.Dx(),
+				Height:   bounds.Dy(),
+				RowPitch: stride,
+			}
+			clImg, err := l.ctx.CreateImage(cl.MemReadOnly|cl.MemCopyHostPtr, format, desc, img.Pix)
+			if err != nil {
+				return err
+			}
+			args = append(args, clImg)
 		default:
 			return errors.New("opencvl: invalid Argument Type")
 		}

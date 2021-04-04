@@ -18,6 +18,7 @@ type Layer interface {
 	execute(img *image.RGBA, time int) (*image.RGBA, error)
 	setArgs([]interface{}) error
 	build() error
+	cleanup()
 }
 
 // NewPipeline creates a new Pipeline
@@ -143,4 +144,11 @@ func (p *Pipeline) AddPipeline(pipeline Pipeline) error {
 		}
 	}
 	return nil
+}
+
+// Cleanup cleans up the arguments (only applies to OpenCL layers)
+func (p *Pipeline) Cleanup() {
+	for _, layer := range p.layers {
+		layer.cleanup()
+	}
 }

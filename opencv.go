@@ -35,6 +35,8 @@ func (l *openCVLayer) setArgs(args []interface{}) error {
 
 func (l *openCVLayer) build() error { return nil }
 
+func (l *openCVLayer) cleanup() {}
+
 // NewOpenCVLayer creates a new opencv layer, given the process function
 func NewOpenCVLayer(process func(mat gocv.Mat, args ...interface{}) gocv.Mat) Layer {
 	return &openCVLayer{

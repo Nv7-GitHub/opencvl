@@ -191,3 +191,12 @@ func (l *openCLLayer) execute(img *image.RGBA, time int) (*image.RGBA, error) {
 	}
 	return final, nil
 }
+
+func (l *openCLLayer) cleanup() {
+	for _, arg := range l.args {
+		_, ok := arg.(*cl.MemObject)
+		if ok {
+			arg.(*cl.MemObject).Release()
+		}
+	}
+}

@@ -145,11 +145,13 @@ func (l *openCLLayer) execute(img *image.RGBA, time int) (*image.RGBA, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer clImg.Release()
 
 	out, err := l.ctx.CreateImageFromImage(cl.MemWriteOnly|cl.MemCopyHostPtr, image.NewRGBA(rect))
 	if err != nil {
 		return nil, err
 	}
+	defer out.Release()
 
 	args := append([]interface{}{clImg, out, int32(time)}, l.args...)
 	err = l.kernel.SetArgs(args...)

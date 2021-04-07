@@ -1,6 +1,6 @@
 module github.com/Nv7-Github/opencvl
 
-go 1.15
+go 1.16
 
 require (
 	github.com/Nv7-Github/go-cl v0.0.0-20201109011528-f62014fcd70a
